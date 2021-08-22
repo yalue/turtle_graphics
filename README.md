@@ -12,7 +12,7 @@ Usage
 See `simple_tester/simple_tester.go` for a more complete example. But, as a
 simple showcase:
 
-```
+```go
 import (
     "github.com/yalue/turtle_graphics"
 )
