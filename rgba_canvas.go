@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/png"
+	"io"
 )
 
 // Keeps track of an RGBA image, along with the canvas boundaries needed to
@@ -186,7 +188,7 @@ func (c *RGBACanvas) DrawArc(x, y, angle, radius, degrees float64) error {
 	dA := degrees / float64(sampleCount)
 
 	// This is the angle pointing to the turtle from the center of the circle.
-	// (Draw a picture if you need to.)
+	// (The opposite of facing from the turtle to the center of the circle.)
 	currentAngle := angle - 90.0
 
 	// Actually move along the arc and draw the points.
@@ -202,5 +204,42 @@ func (c *RGBACanvas) DrawArc(x, y, angle, radius, degrees float64) error {
 		}
 	}
 
+	return nil
+}
+
+// A wrapper function that goes through the entire process of rendering a
+// turtle to a PNG-format file. The PNG file is written to the given out
+// stream. Requires the height of the image, in pixels. The width is
+// automatically calculated to maintain a square aspect ratio.
+func SaveTurtleAsPNG(t *Turtle, pixelsTall int, out io.Writer) error {
+	if pixelsTall <= 0 {
+		return fmt.Errorf("Image height in pixels must be positive")
+	}
+
+	// Get a dummy canvas to compute the image bounds with.
+	dummyCanvas := NewDummyCanvas()
+	e := t.RenderToCanvas(dummyCanvas)
+	if e != nil {
+		return fmt.Errorf("Failed rendering to dummy canvas: %s", e)
+	}
+	minX, minY, maxX, maxY := dummyCanvas.GetExtents()
+	aspectRatio := (maxX - minX) / (maxY - minY)
+	height := pixelsTall
+	width := int(float64(height) * aspectRatio)
+
+	// Get a "real" canvas to draw the image on, with a white background.
+	rgbaCanvas, e := NewRGBACanvas(width, height, minX, minY, maxX, maxY,
+		color.White)
+	if e != nil {
+		return fmt.Errorf("Failed initializing RGBA canvas: %s", e)
+	}
+	e = t.RenderToCanvas(rgbaCanvas)
+	if e != nil {
+		return fmt.Errorf("Failed rendering to RGBA canvas: %s", e)
+	}
+	e = png.Encode(out, rgbaCanvas)
+	if e != nil {
+		return fmt.Errorf("Failed writing PNG image: %s", e)
+	}
 	return nil
 }

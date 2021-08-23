@@ -56,3 +56,6 @@ func main() {
 }
 
 ```
+
+For a mildly more advanced example, see the `l_system_render` directory to show
+how this package can be used to render the dragon curve.

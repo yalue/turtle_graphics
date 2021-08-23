@@ -236,8 +236,9 @@ func (n *moveArcInstruction) apply(t *Turtle, c Canvas) error {
 	if e != nil {
 		return e
 	}
-	// I had to draw a picture to get this stuff right:
-	// angle - 90 = the turtle's original position around the circle
+	// angle - 90 = the turtle's original position around the circle (if you
+	// add 90 degrees to face the center of the circle, you can subtract 90
+	// degrees to face exactly away from the center)
 	// degrees + (angle - 90) = the turtle's new position around the circle
 	//
 	// So, the turtle's new global position can be calculated by moving it a
