@@ -81,6 +81,7 @@ func saveImage(t *turtle_graphics.Turtle, name string) error {
 
 func run() int {
 	var e error
+
 	// Define the productions and movement instructions to generate the dragon
 	// curve.
 	s := NewLSystemTurtle([]byte("F"))
@@ -101,6 +102,7 @@ func run() int {
 	}
 
 	// Get the turtle and save it to a PNG image.
+	fmt.Printf("Length of instruction string: %d bytes.\n", s.L.GetSize())
 	t, e := s.GetTurtle()
 	if e != nil {
 		fmt.Printf("Error getting the dragon-curve turtle: %s\n", e)
