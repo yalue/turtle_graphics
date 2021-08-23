@@ -82,7 +82,13 @@ func NewDummyCanvas() *DummyCanvas {
 // Returns the boundaries of the image that has been drawn to the canvas. May
 // not be tight, but will at least contain the image.
 func (c *DummyCanvas) GetExtents() (minX, minY, maxX, maxY float64) {
-	return c.minX, c.minY, c.maxX, c.maxY
+	xTolerance := (c.maxX - c.minX) * 0.001
+	yTolerance := (c.maxY - c.minY) * 0.001
+	minX = c.minX - xTolerance
+	minY = c.minY - yTolerance
+	maxX = c.maxX + xTolerance
+	maxY = c.maxY + yTolerance
+	return
 }
 
 func (c *DummyCanvas) SetStyle(s StrokeStyle) error {

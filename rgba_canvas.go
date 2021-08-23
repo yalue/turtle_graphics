@@ -155,11 +155,12 @@ func (c *RGBACanvas) DrawLine(x, y, angle, length float64) error {
 
 func (c *RGBACanvas) DrawArc(x, y, angle, radius, degrees float64) error {
 	centerX, centerY := moveDegrees(x, y, angle+90.0, radius)
-
 	// Make degrees positive, and clamp to 360 (when rasterizing, we don't care
 	// if a turtle goes around multiple times, or in what direction).
+	moveBackwards := false
 	if degrees < 0 {
-		degrees = 360 - degrees
+		moveBackwards = true
+		degrees = -degrees
 	}
 	if degrees > 360 {
 		degrees = 360
@@ -172,8 +173,8 @@ func (c *RGBACanvas) DrawArc(x, y, angle, radius, degrees float64) error {
 	if absRadius < 0 {
 		absRadius = -absRadius
 	}
-	radiusPixelsX := int(absRadius / c.dX) + 1
-	radiusPixelsY := int(absRadius / c.dY) + 1
+	radiusPixelsX := int(absRadius/c.dX) + 1
+	radiusPixelsY := int(absRadius/c.dY) + 1
 	var sampleCount int
 	if radiusPixelsX >= radiusPixelsY {
 		sampleCount = radiusPixelsX * 7
@@ -194,7 +195,11 @@ func (c *RGBACanvas) DrawArc(x, y, angle, radius, degrees float64) error {
 		x, y = moveDegrees(centerX, centerY, currentAngle, radius)
 		pixelX, pixelY = c.PointToPixel(x, y)
 		c.pic.Set(pixelX, pixelY, c.style.GetColor())
-		currentAngle += dA
+		if moveBackwards {
+			currentAngle -= dA
+		} else {
+			currentAngle += dA
+		}
 	}
 
 	return nil

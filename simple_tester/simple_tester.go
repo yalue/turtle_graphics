@@ -79,10 +79,37 @@ func run() int {
 	t.MoveArc(-0.25, 180)
 	t.MoveArc(0.25, 360)
 	t.PopPosition()
+	t.PushPosition()
 	t.MoveArc(0.25, 90)
+	t.PopPosition()
+	t.MoveArc(0.25, -90)
 	e = renderTurtle(t, "with_arcs.png")
 	if e != nil {
 		fmt.Printf("Failed drawing image with arcs: %s\n", e)
+		return 1
+	}
+
+	// Now we'll draw a basic 'T' shape with rounded corners.
+	t = turtle_graphics.NewTurtle()
+	t.MoveForward(0.5)
+	t.MoveArc(0.125, 90)
+	t.MoveForward(2)
+	t.MoveArc(-0.125, -90)
+	t.MoveForward(0.75)
+	t.MoveArc(0.125, 90)
+	t.MoveForward(0.5)
+	t.MoveArc(0.125, 90)
+	t.MoveForward(2.5)
+	t.MoveArc(0.125, 90)
+	t.MoveForward(0.5)
+	t.MoveArc(0.125, 90)
+	t.MoveForward(0.75)
+	t.MoveArc(-0.125, -90)
+	t.MoveForward(2)
+	t.MoveArc(0.125, 90)
+	e = renderTurtle(t, "t_shape.png")
+	if e != nil {
+		fmt.Printf("Failed drawing t-shape image: %s\n", e)
 		return 1
 	}
 	return 0
